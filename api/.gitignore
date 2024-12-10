@@ -1,0 +1,68 @@
+# Rider-specific files
+.idea/
+*.sln.iml
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+
+# Build results
+bin/
+obj/
+out/
+
+# OS generated files/macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Temporary files
+*.swp
+*.lock
+*.tmp
+*.temp
+*.log
+
+# Crash reports
+*.dmp
+*.err
+
+# Auto-generated files
+*.g.cs
+*.g.i.cs
+*.designer.cs
+
+# NuGet
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Coverage files
+*.coverage
+*.coveragexml
+*.codecov
+*.coveragejson
+
+# Resharper/Rider cache
+_ReSharper*/
+*.DotSettings.user
+
+# Local History
+.idea/
+
+# Mono
+*.pidb
+*.booproj
+
+# Rider files
+*.sln.DotSettings
+*.sln.dotsettings.user
+
+# Visual Studio Code (if you use it alongside Rider)
+.vscode/
