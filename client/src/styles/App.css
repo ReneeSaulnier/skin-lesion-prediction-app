@@ -1,0 +1,87 @@
+/* Global Styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #1e1e2f; /* Dark background */
+  color: #e1e1e6; /* Light text */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* App Container */
+.app {
+  text-align: center;
+  background: #2b2b40; /* Dark card background */
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  width: 400px;
+}
+
+h1 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #ffffff; /* Pure white for titles */
+}
+
+.upload-section {
+  margin: 20px 0;
+}
+
+/* Upload Box */
+.upload-box {
+  border: 2px dashed #5f5f7a; /* Subtle border */
+  padding: 20px;
+  cursor: pointer;
+  color: #a1a1b8;
+  font-size: 16px;
+  text-align: center;
+  border-radius: 8px;
+  background: #2f2f44;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.upload-box:hover {
+  border-color: #4d90fe; /* Blue hover effect */
+  background-color: #3a3a56;
+}
+
+/* Hidden File Input */
+#file-input {
+  display: none;
+}
+
+/* Predict Button */
+.predict-button {
+  background-color: #4d90fe; /* Vibrant blue button */
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.predict-button:hover {
+  background-color: #357ae8;
+}
+
+.predict-button:disabled {
+  background-color: #4d4d5e; /* Disabled button color */
+  cursor: not-allowed;
+}
+
+/* Result Section */
+.result {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #2e7d32; /* Green success background */
+  border: 1px solid #43a047;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+}
