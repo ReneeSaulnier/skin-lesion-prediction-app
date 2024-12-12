@@ -3,81 +3,85 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Arial', sans-serif;
-  background-image: url("../assets/ai_image.jpg");
-  background-size: cover; /* Ensure the image covers the entire background */
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat; /* Prevent the image from repeating */
-  color: #ffffff; /* Set default text color to white */
+  background-image: url("../assets/landing_page_image.jpg");
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  color: #ffffff;
   overflow: hidden;
 }
 
-/* Landing Page Container */
+/* Container */
 .landing-page {
   height: 100vh;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  text-align: center;
+  padding-left: 60px;
+  box-sizing: border-box;
+  text-align: left;
 }
 
 /* Hero Section */
 .hero-section {
   max-width: 700px;
-  margin: 0 auto;
-  padding: 60px 20px;
-  border-radius: 10px;
-  color: #ffffff; /* White text for better contrast */
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8); /* Text shadow for legibility */
+  margin-right: 500px;
 }
 
+/* Title */
 .title {
-  font-size: 4.5rem;
+  font-size: 4.1rem;
   font-weight: bold;
   margin-bottom: 40px;
-  color: #ffffff; /* Set title color to white */
+  color: #444;
 }
 
+/* Description */
 .description {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   line-height: 1.8;
-  margin-bottom: 30px;
-  color: #ffffff; /* Set description color to white */
+  margin-bottom: 40px;
+  color: #555;
 }
 
-/* Buttons */
+/* Button Group */
 .button-group {
   display: flex;
-  justify-content: center;
   gap: 20px;
+  align-items: center;
 }
 
-.start-button, .learn-button {
+/* Buttons (Pastel and Soft) */
+button {
   border: none;
   padding: 15px 30px;
-  font-size: 18px; /* Larger font size for readability */
+  font-size: 1rem;
   border-radius: 30px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease;
+  font-weight: bold;
 }
 
+/* Start Button: Pastel Pink */
 .start-button {
-  background-color: #0000FF; /* Blue color */
-  color: white;
+  background-color: #f7597e;
+  color: #fff;
 }
 
 .start-button:hover {
-  background-color: #0000cc; /* Darker blue on hover */
+  background-color: #f7597e;
   transform: translateY(-2px);
 }
 
+/* Learn Button: Outlined with Pastel Pink */
 .learn-button {
   background-color: transparent;
-  color: #0000FF; /* Blue color */
-  border: 2px solid #0000FF; /* Blue border */
+  color: #f7597e;
+  border: 2px solid #f7597e;
 }
 
 .learn-button:hover {
-  background-color: #0000FF; /* Blue background on hover */
-  color: white; /* White text on hover */
+  background-color: #f7597e;
+  color: #fff;
   transform: translateY(-2px);
 }
