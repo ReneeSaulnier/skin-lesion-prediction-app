@@ -1,0 +1,8 @@
+name: ml-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python==3.12
+  - kagglehub
+  - pyyaml-6.0.2

@@ -1,0 +1,3 @@
+data_collection:
+  dataset: "kmader/skin-cancer-mnist-ham10000"
+  download_path: "../data/raw"
