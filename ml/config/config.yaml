@@ -1,3 +1,11 @@
 data_collection:
   dataset: "kmader/skin-cancer-mnist-ham10000"
-  download_path: "../data/raw"
+  download_path: "data/raw"
+
+data_processing:
+  metadata_path: "../data/raw/HAM10000_metadata.csv"
+  image_path: "../data/raw/HAM10000_images"
+  processed_path: "../data/processed"
+  preprocess_images:
+    resize: [128, 128]
+    normalize: True
