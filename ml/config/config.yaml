@@ -11,6 +11,14 @@ data_processing:
   preprocess_images:
     resize: True
     dimensions: [128, 128]
-    normalize: False
-  combine_image_df: False
-  combing_image_and_metadata: False
+    normalize: True
+  combine_image_df: True
+  combing_image_and_metadata: True
+
+model_training:
+  model:
+    name: "microsoft/resnet-50"
+    num_of_classes: 7
+    output_path: "model/"
+  logs:
+    path: "logs"

@@ -85,7 +85,22 @@ else:
 
 # Split the data for train and test
 X = merged_df['image']  # X = Features (images)
-y = merged_df['dx']     # y = Target (diagnosis)
+y = merged_df['dx']     # y = Target (diagnosis) 7 classes total
+
+# Convert Series of arrays into a single NumPy array
+X = np.stack(X.values, axis=0) 
+
+# Normalize
+def normalize_image_array(X):
+    """
+    Normalize the image to the range [0, 1] using min-max scaling.
+    """
+    X_min = X.min()
+    X_max = X.max()
+    return (X - X_min) / (X_max - X_min + 1e-7)
+
+if image_normalize:
+    X = normalize_image_array(X)
 
 X_train_df, X_test_df, y_train_df, y_test_df = train_test_split(
     X,
@@ -94,16 +109,12 @@ X_train_df, X_test_df, y_train_df, y_test_df = train_test_split(
     random_state=42
 )
 
-# Normalize
-def normalize_image(image):
-    """
-    Normalize the image to the range [0, 1] using min-max scaling.
-    """
-    train_min = np.min(image)
-    train_max = np.max(image)
-    return (image - train_min) / (train_max - train_min + 1e-7)
+# Save arrays as .npy for lower computation time
+np.save(os.path.join(processed_path, 'X_train.npy'), X_train_df)
+np.save(os.path.join(processed_path, 'X_test.npy'), X_test_df)
 
-if image_normalize:
-    X_train_df = X_train_df.apply(lambda img: np.array(img, dtype=np.float32))
-    X_train_df = X_train_df.apply(lambda img: normalize_image(img))
-    X_test_df = X_test_df.apply(lambda img: normalize_image(img))    
+# Save labels as CSV
+y_train_df.to_csv(os.path.join(processed_path, 'y_train.csv'), index=False)
+y_test_df.to_csv(os.path.join(processed_path, 'y_test.csv'), index=False)
+
+print(f"Train and test sets saved in {processed_path}")
