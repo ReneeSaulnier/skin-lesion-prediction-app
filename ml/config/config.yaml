@@ -3,10 +3,14 @@ data_collection:
   download_path: "data/raw"
 
 data_processing:
-  metadata_path: "data/raw/HAM10000_metadata.csv"
-  image_path_1: "data/raw/HAM10000_images_part_1"
-  image_path_2: "data/raw/ham10000_images_part_2"
-  processed_path: "data/processed"
+  path:
+    metadata_path: "data/raw/HAM10000_metadata.csv"
+    image_path_1: "data/raw/HAM10000_images_part_1"
+    image_path_2: "data/raw/ham10000_images_part_2"
+    processed_path: "data/processed"
   preprocess_images:
-    resize: [128, 128]
-    normalize: True
+    resize: True
+    dimensions: [128, 128]
+    normalize: False
+  combine_image_df: False
+  combing_image_and_metadata: False
