@@ -8,12 +8,8 @@ data_processing:
     image_path_1: "data/raw/HAM10000_images_part_1"
     image_path_2: "data/raw/ham10000_images_part_2"
     processed_path: "data/processed"
-  preprocess_images:
-    resize: True
-    dimensions: [128, 128]
-    normalize: True
-  combine_image_df: True
-  combing_image_and_metadata: True
+  combine_image_df: False
+  combing_image_and_metadata: False
 
 model_training:
   model:

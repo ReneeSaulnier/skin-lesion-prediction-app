@@ -21,34 +21,25 @@ processed_path = config['data_processing']['path']['processed_path']
 combine_image_df = config['data_processing']['combine_image_df']
 combing_image_and_metadata = config['data_processing']['combing_image_and_metadata']
 
-# Process image flags from config
-image_resize = config['data_processing']['preprocess_images']['resize']
-image_resize_dimensions = config['data_processing']['preprocess_images']['dimensions']
-image_normalize = config['data_processing']['preprocess_images']['normalize']
-
-def load_images_into_single_df(path, image_resize):
+def load_image_paths_into_single_df(path):
     """
-    Load the images from the path and return a dataframe
-    :param path: str: path to the images
-    :return: pd.DataFrame: dataframe of the images
+    Load the image paths into a dataframe without loading the actual images.
+    :param path: str: path to the image directory
+    :return: pd.DataFrame: dataframe of image paths
     """
-    images = []
+    image_paths = []
     for file_name in os.listdir(path):
-        image_path = os.path.join(path, file_name)
-        with Image.open(image_path) as img:
-            if image_resize:
-                img = img.resize(image_resize_dimensions)
-            # Convert the image into a numpy array after resizing
-            img_array = np.array(img, dtype=np.float32)
-            images.append({'filename': file_name, 'image': img_array})
+        if file_name.endswith(('.jpg', '.png', '.jpeg')):
+            image_path = os.path.join(path, file_name)
+            image_paths.append({'filename': file_name, 'image_path': image_path})
 
-    return pd.DataFrame(images)
+    return pd.DataFrame(image_paths)
 
 if combine_image_df:
-    image_df_1 = load_images_into_single_df(image_path_1, image_resize)
-    image_df_2 = load_images_into_single_df(image_path_2, image_resize)
-    image_df = pd.concat([image_df_1, image_df_2], axis=0)
-    print('Combinging image folders into one df')
+    image_path_1_df = load_image_paths_into_single_df(image_path_1)
+    image_path_2_df = load_image_paths_into_single_df(image_path_2)
+    image_df = pd.concat([image_path_1_df, image_path_2_df], axis=0)
+    print('Combined image paths into a single dataframe')
 
 
 # Load the metadata file
@@ -84,23 +75,8 @@ else:
     print('Loaded pre-merged data')
 
 # Split the data for train and test
-X = merged_df['image']  # X = Features (images)
+X = merged_df['image_path']  # X = Features (images)
 y = merged_df['dx']     # y = Target (diagnosis) 7 classes total
-
-# Convert Series of arrays into a single NumPy array
-X = np.stack(X.values, axis=0) 
-
-# Normalize
-def normalize_image_array(X):
-    """
-    Normalize the image to the range [0, 1] using min-max scaling.
-    """
-    X_min = X.min()
-    X_max = X.max()
-    return (X - X_min) / (X_max - X_min + 1e-7)
-
-if image_normalize:
-    X = normalize_image_array(X)
 
 X_train_df, X_test_df, y_train_df, y_test_df = train_test_split(
     X,
