@@ -10,3 +10,5 @@ dependencies:
   - pillow==11.0.0
   - scikit-learn==1.5.1
   - transformers==4.45.2
+  - pytorch==2.5.1
+  - accelerate==1.2.1

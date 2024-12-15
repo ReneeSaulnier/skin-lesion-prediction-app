@@ -8,8 +8,8 @@ data_processing:
     image_path_1: "data/raw/HAM10000_images_part_1"
     image_path_2: "data/raw/ham10000_images_part_2"
     processed_path: "data/processed"
-  combine_image_df: False
-  combing_image_and_metadata: False
+  combine_image_df: True
+  combing_image_and_metadata: True
 
 model_training:
   model:

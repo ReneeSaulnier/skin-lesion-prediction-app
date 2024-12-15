@@ -3,7 +3,11 @@ import torch
 import os
 import pandas as pd
 import numpy as np
+from PIL import Image
 from transformers import ResNetForImageClassification, AutoImageProcessor, Trainer, TrainingArguments, DefaultDataCollator
+from torch.utils.data import Dataset
+from torch.utils.data import DataLoader
+
 
 # Load the config file
 config_path = "config/config.yaml"
@@ -24,10 +28,11 @@ y_train_path = os.path.join(processed_path, 'y_train.csv')
 y_test_path = os.path.join(processed_path, 'y_test.csv')
 
 # Load data
-X_train = np.load(X_train_path)
-X_test = np.load(X_test_path)
+X_train = np.load(X_train_path, allow_pickle=True)
+X_test = np.load(X_test_path, allow_pickle=True)
 y_train = pd.read_csv(y_train_path)['dx'].values
 y_test = pd.read_csv(y_test_path)['dx'].values
+merged_df = pd.read_csv(os.path.join(processed_path, "merged_data.csv"))
 
 # Get the unique labels (predictions)
 class_names = np.unique(y_train)
@@ -36,54 +41,74 @@ y_train_numeric = np.array([class_to_idx[label] for label in y_train], dtype=np.
 y_test_numeric = np.array([class_to_idx[label] for label in y_test], dtype=np.int64)
 
 processor = AutoImageProcessor.from_pretrained(model_name)
-processor.do_rescale = False
-# Preprocess NumPy arrays into tensors
-def preprocess(X, y):
-    pixel_values = processor(images=X, return_tensors="pt")['pixel_values']  # Normalize and convert to tensors
-    labels = torch.tensor(y, dtype=torch.long)
-    return pixel_values, labels
-
-X_train, y_train = preprocess(X_train, y_train)
-X_test, y_test = preprocess(X_test, y_test)
-
-# Create datasets directly from preprocessed tensors
-train_dataset = torch.utils.data.TensorDataset(X_train, y_train)
-test_dataset = torch.utils.data.TensorDataset(X_test, y_test)
-
-# Model
-model = ResNetForImageClassification.from_pretrained(model_name, num_labels=num_of_classes)
-
-# Define training arguments
-training_args = TrainingArguments(
-    output_dir=model_result_log,
-    evaluation_strategy="epoch",
-    save_strategy="epoch",
-    num_train_epochs=5,
-    per_device_train_batch_size=16,
-    per_device_eval_batch_size=16,
-    learning_rate=5e-5,
-    weight_decay=0.01,
-    logging_dir="./logs",
-    logging_steps=50,
+model = ResNetForImageClassification._from_config(
+    ResNetForImageClassification.config_class(num_labels=num_of_classes)
 )
 
-# Initialize trainer
+class SkinCancerDataset(Dataset):
+    def __init__(self, image_paths, labels, processor):
+        """
+        A custom PyTorch dataset for dynamically loading and preprocessing images.
+
+        :param image_paths: List of image file paths
+        :param labels: List of numeric labels corresponding to the images
+        :param processor: Hugging Face AutoImageProcessor for preprocessing
+        """
+        self.image_paths = image_paths
+        self.labels = labels
+        self.processor = processor
+
+    def __len__(self):
+        return len(self.image_paths)
+
+    def __getitem__(self, idx):
+        image_path = self.image_paths[idx]
+        label = self.labels[idx]
+
+        # Load and preprocess the image dynamically
+        image = Image.open(image_path).convert("RGB")
+        inputs = self.processor(images=image, return_tensors="pt")
+
+        # Return preprocessed image and label
+        return {
+            'pixel_values': inputs['pixel_values'].squeeze(0),  # Remove batch dimension
+            'labels': torch.tensor(label, dtype=torch.long)
+        }
+    
+train_dataset = SkinCancerDataset(X_train, y_train_numeric, processor)
+test_dataset = SkinCancerDataset(X_test, y_test_numeric, processor)
+
+train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+test_dataloader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+
+training_args = TrainingArguments(
+    output_dir=output_path,
+    evaluation_strategy="epoch",
+    save_strategy="epoch",
+    learning_rate=5e-5,
+    per_device_train_batch_size=32,
+    per_device_eval_batch_size=32,
+    num_train_epochs=10,
+    weight_decay=0.01,
+    logging_dir=model_result_log,
+    logging_steps=10,
+    save_total_limit=2,
+    push_to_hub=False
+)
+
+data_collator = DefaultDataCollator()
+
 trainer = Trainer(
     model=model,
     args=training_args,
     train_dataset=train_dataset,
     eval_dataset=test_dataset,
-    tokenizer=processor,  # Not strictly necessary for images, but some pipelines expect this
-    data_collator=DefaultDataCollator(return_tensors="pt"),  # Handles batching
-    do_rescale=False,
+    tokenizer=processor,  # The processor works as a tokenizer here
+    data_collator=data_collator
 )
 
-# Train
 trainer.train()
 
-# Evaluate
-metrics = trainer.evaluate()
-print(metrics)
+trainer.evaluate()
 
-# Save the model
-trainer.save_model(output_path)
+trainer.save(output_path)
