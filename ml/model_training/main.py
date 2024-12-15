@@ -109,6 +109,10 @@ trainer = Trainer(
 
 trainer.train()
 
-trainer.evaluate()
+eval_results = trainer.evaluate()
+print(f"Evaluation results: {eval_results}")
+# Extract and print accuracy
+accuracy = eval_results.get("eval_accuracy")
+print(f"Accuracy: {accuracy}")
 
-trainer.save(output_path)
+trainer.save_model(output_path)
