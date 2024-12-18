@@ -12,3 +12,5 @@ dependencies:
   - transformers==4.45.2
   - pytorch==2.5.1
   - accelerate==1.2.1
+  - fastapi==0.112.2
+  - uvicorn==0.34.0

@@ -18,3 +18,7 @@ model_training:
     output_path: "model/"
   logs:
     path: "logs"
+
+model_validation:
+  model:
+    path: "model/"
