@@ -47,7 +47,7 @@ def get_class_names(predicted_class_number):
     return class_names[predicted_class_number]
 
 # Endpoint to predict from an image path
-@app.post("/predict/")
+@app.post("/predict")
 async def predict(image_path: str = Query(..., description="Path to the image file on the server")):
     """
     Accepts an image file path as input and returns the predicted class name.
