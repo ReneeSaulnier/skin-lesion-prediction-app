@@ -9,19 +9,45 @@ namespace api
         {
             // Create a host for the application
             var host = Host.CreateDefaultBuilder(args)
-                .ConfigureServices((context, services) =>
+                .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    // Appsettings
-                    services.Configure<MlConfig>(context.Configuration.GetSection("mlConfig"));
+                    webBuilder.ConfigureServices((context, services) =>
+                    {
+                        // Bind "mlConfig" section in appsettings.json to MlConfig
+                        services.Configure<MlConfig>(context.Configuration.GetSection("mlConfig"));
 
-                    // Service
-                    services.AddSingleton<MlService>();
+                        // Register MlService
+                        services.AddSingleton<MlService>();
 
-                    // Logger
-                    services.AddLogging();
+                        // Add controllers
+                        services.AddControllers();
 
-                    // Controller
-                    services.AddControllers();
+                        // Add Swagger
+                        services.AddEndpointsApiExplorer();
+                        services.AddSwaggerGen();
+                    });
+
+                    webBuilder.Configure((context, app) =>
+                    {
+                        // Enable Swagger only for development or production (if needed)
+                        if (context.HostingEnvironment.IsDevelopment() || context.HostingEnvironment.IsProduction())
+                        {
+                            app.UseSwagger();
+                            app.UseSwaggerUI(c =>
+                            {
+                                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Skin Cancer Prediction API v1");
+                                c.RoutePrefix = string.Empty;
+                            });
+                        }
+
+                        // Add routing and map controllers
+                        app.UseRouting();
+                        app.UseAuthorization();
+                        app.UseEndpoints(endpoints =>
+                        {
+                            endpoints.MapControllers();
+                        });
+                    });
                 })
                 .Build();
 

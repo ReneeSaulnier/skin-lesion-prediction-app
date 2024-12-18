@@ -1,0 +1,10 @@
+kagglehub
+pyyaml==6.0.2
+pandas==2.2.3
+pillow==11.0.0
+scikit-learn==1.5.1
+transformers==4.45.2
+torch==2.5.1
+accelerate==1.2.1
+fastapi==0.112.2
+uvicorn==0.34.0

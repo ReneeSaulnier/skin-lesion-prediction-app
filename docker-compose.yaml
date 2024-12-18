@@ -1,0 +1,21 @@
+services:
+  csharp-backend:
+    build:
+      context: ./api/  # Path to the app
+    container_name: csharp-backend
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+  ml:
+    build:
+      context: ./ml/  # Path to the app
+    container_name: ml
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+      
+networks:
+  app-network:
+    driver: bridge

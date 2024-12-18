@@ -4,7 +4,7 @@ using api.Service;
 namespace api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/")]
     public class PredictionController : ControllerBase
     {
         private readonly MlService _mlService;
@@ -14,7 +14,7 @@ namespace api.Controllers
             _mlService = mlService;
         }
 
-        [HttpGet("predict")]
+        [HttpPost("predict")]
         public async Task<IActionResult> Predict([FromQuery] string imagePath)
         {
             if (string.IsNullOrEmpty(imagePath))

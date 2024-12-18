@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using api.Model.Config;
+using Microsoft.Extensions.Options;
 
 namespace api.Service
 {
@@ -10,9 +11,9 @@ namespace api.Service
        private readonly HttpClient _httpClient;
        private readonly ILogger<MlService> _logger;
 
-       public MlService(MlConfig config, ILogger<MlService> logger)
+       public MlService(IOptions<MlConfig> config, ILogger<MlService> logger)
        {
-           _config = config;
+           _config = config.Value;
            _logger = logger;
            
            if (string.IsNullOrEmpty(_config.BaseUrl))

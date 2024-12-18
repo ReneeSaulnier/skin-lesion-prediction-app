@@ -1,3 +1,5 @@
 .DS_Store
 ml/server/__pycache__
 model/
+.idea/
+*.sln
