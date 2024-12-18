@@ -1,5 +1,6 @@
+using System.Text;
+using System.Text.Json;
 using api.Model.Config;
-using Microsoft.Extensions.Logging;
 
 namespace api.Service
 {
@@ -24,13 +25,37 @@ namespace api.Service
            _logger.LogInformation($"BaseUrl: {_config.BaseUrl}");
        }
 
-       public async Task<string> PredictAsync()
+       public async Task<PredictionResponse> PredictAsync(string imagePath)
        {
-           // try
-           // {
-           //     _logger.LogInformation("Predicting...");
-           // }
-           return "test";
+           // Payload
+           var payload = new { image_path = imagePath };
+           var jsonPayload = JsonSerializer.Serialize(payload);
+           var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+           try
+           {
+               var response = await _httpClient.PostAsync("predict/", content);
+
+               if (response.IsSuccessStatusCode)
+               {
+                   var jsonResponse = await response.Content.ReadAsStringAsync();
+                   var result = JsonSerializer.Deserialize<PredictionResponse>(jsonResponse);
+                   return result;
+               }
+           }
+           catch (Exception ex)
+           {
+               throw new Exception($"Failed to communicate with FastAPI: {ex.Message}");
+           }
+           
+           return null;
+       }
+       
+       // Class to hold the response
+       public class PredictionResponse
+       {
+           public required string Predicted_Class { get; set; }
+           public required string Confidence { get; set; }
        }
     }
 }

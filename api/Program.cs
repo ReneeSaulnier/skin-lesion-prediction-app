@@ -1,9 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-
+﻿using api.Service;
 using api.Model.Config;
-using api.Service;
 
 namespace api
 {
@@ -11,51 +7,26 @@ namespace api
     {
         static void Main(string[] args)
         {
-            // Create the Host to automatically handle DI, configuration, and logging
+            // Create a host for the application
             var host = Host.CreateDefaultBuilder(args)
                 .ConfigureServices((context, services) =>
                 {
-                    // Automatically bind "mlConfig" section in appsettings.json to MlConfig
+                    // Appsettings
                     services.Configure<MlConfig>(context.Configuration.GetSection("mlConfig"));
 
-                    // Register services
+                    // Service
                     services.AddSingleton<MlService>();
 
-                    // Add logging
+                    // Logger
                     services.AddLogging();
+
+                    // Controller
+                    services.AddControllers();
                 })
                 .Build();
 
-            // Run the application logic
-            RunApplication(host.Services);
-        }
-
-        static void RunApplication(IServiceProvider services)
-        {
-            using (var scope = services.CreateScope())
-            {
-                var serviceProvider = scope.ServiceProvider;
-
-                try
-                {
-                    // Resolve logger and MlService
-                    var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                    var mlService = serviceProvider.GetRequiredService<MlService>();
-
-                    logger.LogInformation("Application started.");
-
-                    // Call service method
-                    var result = mlService.PredictAsync();
-                    Console.WriteLine($"Prediction Result: {result}");
-
-                    logger.LogInformation("Application finished.");
-                }
-                catch (Exception ex)
-                {
-                    var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while running the application.");
-                }
-            }
+            // Run the application
+            host.Run();
         }
     }
 }
