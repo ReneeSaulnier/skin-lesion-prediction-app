@@ -45,3 +45,6 @@ Thumbs.db
 
 # Generated files by React scripts
 public/static/
+
+# package-lock.json
+package-lock.json

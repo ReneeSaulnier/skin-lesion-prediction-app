@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000"; // Replace with your backend's URL
+const BASE_URL = "http://localhost:8080"; // Replace with your backend's URL
 
 /**
  * Sends an image file to the backend for prediction.
