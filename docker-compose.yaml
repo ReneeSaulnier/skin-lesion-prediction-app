@@ -7,6 +7,8 @@ services:
       - "8080:8080"
     networks:
       - app-network
+    volumes:
+      - image-storage:/shared/images
   ml:
     build:
       context: ./ml/  # Path to the app
@@ -15,7 +17,12 @@ services:
       - "8000:8000"
     networks:
       - app-network
+    volumes:
+      - image-storage:/shared/images
       
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  image-storage:
