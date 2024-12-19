@@ -32,15 +32,15 @@ namespace api
                     webBuilder.Configure((context, app) =>
                     {
                         // Enable Swagger only for development or production (if needed)
-                        //if (context.HostingEnvironment.IsDevelopment() || context.HostingEnvironment.IsProduction())
-                        //{
+                        if (context.HostingEnvironment.IsDevelopment() || context.HostingEnvironment.IsProduction())
+                        {
                             app.UseSwagger();
                             app.UseSwaggerUI(c =>
                             {
                                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Skin Cancer Prediction API v1");
                                 c.RoutePrefix = string.Empty;
                             });
-                        //}
+                        }
 
                         // Add routing and map controllers
                         app.UseRouting();
