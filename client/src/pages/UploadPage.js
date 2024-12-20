@@ -1,19 +1,30 @@
 import React from 'react';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import '../styles/UploadPage.css';
 
 function UploadPage() {
+
   return (
-      <div className="upload-page">
-        <div className="hero-section">
-          <h1 className="title">Upload a photo of your skin lesion.</h1>
-            <p className="description">
-                Snap a photo and let AI guide you. Whether it’s just a harmless freckle or an early sign of something serious, checking now can make all the difference.
-            </p>  
-            <div className="button-group">
-                <button className="upload-button">Upload Photo</button>
-            </div>
-        </div>  
+    <div className="upload-page">
+      <div className="upload-card">
+        <h1 className="upload-title">Upload Photo</h1>
+        <div className='upload-dropbox'>
+          <button className="upload-button">
+            <CloudUploadIcon />
+            <span>Upload file</span>
+          </button>
+
+          <div className="selected-file">
+            <p>File Name Here</p>
+            <button>
+              <DeleteForeverIcon />
+            </button>
+          </div>
+
+        </div>
       </div>
+    </div>
   );
 }
 
