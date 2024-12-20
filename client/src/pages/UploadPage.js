@@ -35,6 +35,7 @@ function UploadPage() {
 
   return (
     <div className="upload-page">
+      <h1 className="upload-title">Get instant results.</h1>
       <div className="upload-card">
         <div className='upload-dropbox'>
           <input
