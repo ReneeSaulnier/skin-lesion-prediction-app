@@ -6,8 +6,8 @@ import '../styles/UploadPage.css';
 
 function UploadPage() {
 
-  const [fileName, setFileName] = useState('');
-  const [error, setError] = useState('');
+  const [file, setFileName] = useState('');
+  const [error, setError] = useState(''); 
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
@@ -26,8 +26,8 @@ function UploadPage() {
   };
 
   const handleSubmit = () => {
-    if (fileName) {
-      navigate("/ResultsPage");
+    if (file) {
+      navigate("/ResultPage", { state: { file } });
     } else {
       setError('Please select a file to upload!');
     }
@@ -48,9 +48,9 @@ function UploadPage() {
             <CloudUploadIcon />
             <span>Upload file</span>
           </button>
-          {fileName && (
+          {file && (
             <div className="selected-file">
-              <p>{fileName}</p>
+              <p>{file}</p>
               <button onClick={handleDelete}>
                 <DeleteForeverIcon />
               </button>

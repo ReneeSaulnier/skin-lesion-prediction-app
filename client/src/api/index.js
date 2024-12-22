@@ -1,18 +1,20 @@
-const BASE_URL = "http://localhost:8080"; // Replace with your backend's URL
+const BASE_URL = "http://localhost:8080/api"; // Replace with your backend's URL
 
 /**
- * Sends an image file to the backend for prediction.
- * @param {File} imageFile - The image file to upload.
+ * Sends the image path to the backend for prediction.
+ * @param {string} imagePath - The path of the image to upload.
  * @returns {Promise} - A promise resolving with the prediction result.
  */
-export const predictImage = async (imageFile) => {
-  const formData = new FormData();
-  formData.append("image", imageFile);
+export const predictImage = async (imagePath) => {
+  const payload = { image_path: imagePath };
 
   try {
     const response = await fetch(`${BASE_URL}/predict`, {
       method: "POST",
-      body: formData,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
