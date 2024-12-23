@@ -32,8 +32,8 @@ function UploadPage() {
 
     if (file) {
       try {
-        await axios.post('http://localhost:8080/api/predict', {
-          imagePath: file
+        await axios.post('http://localhost:8080/api/upload', {
+          file: file
         })
           .then((response) => {
             console.log(response.data);

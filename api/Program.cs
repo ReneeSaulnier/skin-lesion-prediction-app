@@ -27,6 +27,17 @@ namespace api
                         // Add Swagger
                         services.AddEndpointsApiExplorer();
                         services.AddSwaggerGen();
+                        
+                        // Add CORS policy *** Not for production ***
+                        services.AddCors(options =>
+                        {
+                            options.AddPolicy("AllowAll", builder =>
+                            {
+                                builder.AllowAnyOrigin()
+                                    .AllowAnyMethod()
+                                    .AllowAnyHeader();
+                            });
+                        });
                     });
 
                     webBuilder.Configure((context, app) =>
@@ -41,6 +52,9 @@ namespace api
                                 c.RoutePrefix = string.Empty;
                             });
                         }
+                        
+                        // Enable CORS
+                        app.UseCors("AllowAll");
 
                         // Add routing and map controllers
                         app.UseRouting();

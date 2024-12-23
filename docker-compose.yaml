@@ -19,6 +19,16 @@ services:
       - app-network
     volumes:
       - image-storage:/shared/images
+  client:
+    build:
+      context: ./client/  # Path to the app
+    container_name: fontend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    volumes:
+      - image-storage:/shared/images
       
 networks:
   app-network:
