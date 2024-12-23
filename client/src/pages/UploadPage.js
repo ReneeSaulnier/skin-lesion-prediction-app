@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 import '../styles/UploadPage.css';
 
 function UploadPage() {
 
   const [file, setFileName] = useState('');
   const [error, setError] = useState(''); 
+  const [result, setResult] = useState('');
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
@@ -25,9 +27,29 @@ function UploadPage() {
     setFileName('');
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     if (file) {
-      navigate("/ResultPage", { state: { file } });
+      try {
+        await axios.post('http://localhost:8080/api/predict', {
+          imagePath: file
+        })
+          .then((response) => {
+            console.log(response.data);
+            setResult(response.data.result);
+            //navigate('/result', { state: { file: file } });
+          })
+          .catch((error) => {
+            console.error(error);
+            setError('An error occurred while processing the file!');
+          });
+      } catch (error) {
+        console.error(error);
+        setError('An error occurred while processing the file');
+      }
+
+
     } else {
       setError('Please select a file to upload!');
     }
@@ -63,6 +85,13 @@ function UploadPage() {
             <p className="error-message">{error}</p>
           )}
         </div>
+
+        {result && (
+          <div className="result">
+            <h2>Result</h2>
+            <p>{result}</p>
+          </div>
+        )}
       </div>
     </div>
   );
