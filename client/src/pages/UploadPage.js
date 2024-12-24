@@ -7,9 +7,11 @@ import '../styles/UploadPage.css';
 
 function UploadPage() {
 
-  const [file, setFileName] = useState('');
+  const [file, setFile] = useState('');
   const [error, setError] = useState(''); 
   const [result, setResult] = useState('');
+  const uploadUrl = 'http://localhost:8080/api/upload';
+  const predictUrl = 'http://localhost:8080/api/predict';
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
@@ -17,14 +19,14 @@ function UploadPage() {
   };
 
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setFileName(file.name);
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
     }
   };
 
   const handleDelete = () => {
-    setFileName('');
+    setFile(null);
   };
 
   const handleSubmit = async (e) => {
@@ -32,28 +34,35 @@ function UploadPage() {
 
     if (file) {
       try {
-        await axios.post('http://localhost:8080/api/upload', {
-          file: file
-        })
-          .then((response) => {
-            console.log(response.data);
-            setResult(response.data.result);
-            //navigate('/result', { state: { file: file } });
-          })
-          .catch((error) => {
-            console.error(error);
-            setError('An error occurred while processing the file!');
-          });
+        uploadFile(file);
       } catch (error) {
         console.error(error);
         setError('An error occurred while processing the file');
       }
-
-
     } else {
       setError('Please select a file to upload!');
     }
   }
+
+
+  const uploadFile = async (file) => {  
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Send the FormData
+      const response = await axios.post(uploadUrl, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'accept': '*/*',
+        },
+      });
+  
+      console.log('File uploaded successfully:', response.data);
+    } catch (error) {
+      console.error('Error uploading file:', error.response || error.message);
+    }
+  };
 
   return (
     <div className="upload-page">
@@ -72,7 +81,7 @@ function UploadPage() {
           </button>
           {file && (
             <div className="selected-file">
-              <p>{file}</p>
+              <p>{file.name}</p>
               <button onClick={handleDelete}>
                 <DeleteForeverIcon />
               </button>
