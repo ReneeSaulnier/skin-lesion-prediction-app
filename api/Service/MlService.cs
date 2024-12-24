@@ -1,5 +1,5 @@
-using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using api.Model.Config;
 using Microsoft.Extensions.Options;
 
@@ -26,43 +26,24 @@ namespace api.Service
            _logger.LogInformation($"BaseUrl: {_config.BaseUrl}");
        }
 
-       public async Task<PredictionResponse> PredictAsync(string imagePath)
+       public async Task<string> PredictAsync(string imagePath)
        {
-           // // Payload
-           // var payload = new { image_path = imagePath };
-           // var jsonPayload = JsonSerializer.Serialize(payload);
-           // var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-           //
-           // try
-           // {
-           //     var response = await _httpClient.PostAsync("predict/", content);
-           //     Console.WriteLine("Response: " + await response.Content.ReadAsStringAsync());
-           //
-           //     if (response.IsSuccessStatusCode)
-           //     {
-           //         var jsonResponse = await response.Content.ReadAsStringAsync();
-           //         var result = JsonSerializer.Deserialize<PredictionResponse>(jsonResponse);
-           //         return result;
-           //     }
-           // }
-           // catch (Exception ex)
-           // {
-           //     throw new Exception($"Failed to communicate with FastAPI: {ex.Message}");
-           // }
-
-           //return null;
-           var encodedPath = Uri.EscapeDataString(imagePath);
-           var url = $"http://localhost:5000/api/predict?imagePath=={encodedPath}";
-
            try
            {
-               var response = await _httpClient.GetAsync(url);
+               // Construct the query string
+               string imagePath1 = "/shared/images/" + imagePath;
+               var requestUri = $"api/predict?image_path={Uri.EscapeDataString(imagePath1)}";
+
+               // Make the GET request
+               var response = await _httpClient.PostAsync(requestUri, null);
+
                if (response.IsSuccessStatusCode)
                {
-                   var jsonResponse = await response.Content.ReadAsStringAsync();
-                   var result = JsonSerializer.Deserialize<PredictionResponse>(jsonResponse);
-                   return result;
+                   var jsonResult = await response.Content.ReadAsStringAsync();
+                   return jsonResult;
                }
+
+               _logger.LogError($"Prediction failed: {await response.Content.ReadAsStringAsync()}");
            }
            catch (Exception ex)
            {
@@ -71,11 +52,12 @@ namespace api.Service
 
            return null;
        }
-       
+
        // Class to hold the response
        public class PredictionResponse
        {
-           public required string Predicted_Class { get; set; }
+           public required string PredictedClass { get; set; }
+
            public required string Confidence { get; set; }
        }
     }

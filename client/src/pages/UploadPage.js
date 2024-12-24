@@ -35,6 +35,7 @@ function UploadPage() {
     if (file) {
       try {
         uploadFile(file);
+        predictFile(file)
       } catch (error) {
         console.error(error);
         setError('An error occurred while processing the file');
@@ -45,9 +46,9 @@ function UploadPage() {
   }
 
 
-  const uploadFile = async (file) => {  
+  const uploadFile = async (file) => { 
+    const formData = new FormData(); 
     try {
-      const formData = new FormData();
       formData.append('file', file);
 
       // Send the FormData
@@ -63,6 +64,33 @@ function UploadPage() {
       console.error('Error uploading file:', error.response || error.message);
     }
   };
+
+  const predictFile = async (file) => {
+    console.log('Predicting file:', file);
+    console.log('Predicting file name:', file.name);
+    const formData = new FormData();
+    try {
+      formData.append('imagePath', file.name);
+
+      // Log the formData
+      for (var pair of formData.entries()) {
+        console.log(pair[0] + ', ' + pair[1]);
+      }
+
+      // Send the FormData
+      const response = await axios.post(predictUrl, formData, {
+        headers: {
+          'accept': '*/*',
+        },
+      });
+
+      console.log('Prediction:', response.data);
+      setResult(response.data);
+    } catch (error) {
+      console.error('Error predicting file:', error.response || error.message);
+    }
+  };
+
 
   return (
     <div className="upload-page">
@@ -98,7 +126,7 @@ function UploadPage() {
         {result && (
           <div className="result">
             <h2>Result</h2>
-            <p>{result}</p>
+            <p>{result.name}</p>
           </div>
         )}
       </div>
