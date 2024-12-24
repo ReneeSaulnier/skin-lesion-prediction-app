@@ -15,7 +15,7 @@ namespace api.Controllers
         }
 
         [HttpPost("predict")]
-        public async Task<IActionResult> Predict([FromQuery] string imagePath)
+        public async Task<IActionResult> Predict([FromForm] string imagePath)
         {
             if (string.IsNullOrEmpty(imagePath))
             {

@@ -28,15 +28,35 @@ namespace api.Service
 
        public async Task<PredictionResponse> PredictAsync(string imagePath)
        {
-           // Payload
-           var payload = new { image_path = imagePath };
-           var jsonPayload = JsonSerializer.Serialize(payload);
-           var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+           // // Payload
+           // var payload = new { image_path = imagePath };
+           // var jsonPayload = JsonSerializer.Serialize(payload);
+           // var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+           //
+           // try
+           // {
+           //     var response = await _httpClient.PostAsync("predict/", content);
+           //     Console.WriteLine("Response: " + await response.Content.ReadAsStringAsync());
+           //
+           //     if (response.IsSuccessStatusCode)
+           //     {
+           //         var jsonResponse = await response.Content.ReadAsStringAsync();
+           //         var result = JsonSerializer.Deserialize<PredictionResponse>(jsonResponse);
+           //         return result;
+           //     }
+           // }
+           // catch (Exception ex)
+           // {
+           //     throw new Exception($"Failed to communicate with FastAPI: {ex.Message}");
+           // }
+
+           //return null;
+           var encodedPath = Uri.EscapeDataString(imagePath);
+           var url = $"http://localhost:5000/api/predict?imagePath=={encodedPath}";
 
            try
            {
-               var response = await _httpClient.PostAsync("predict/", content);
-
+               var response = await _httpClient.GetAsync(url);
                if (response.IsSuccessStatusCode)
                {
                    var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -48,7 +68,7 @@ namespace api.Service
            {
                throw new Exception($"Failed to communicate with FastAPI: {ex.Message}");
            }
-           
+
            return null;
        }
        
