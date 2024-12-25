@@ -94,7 +94,6 @@ function UploadPage() {
 
   return (
     <div className="upload-page">
-      <h1 className="upload-title">Get instant results.</h1>
       <div className="upload-card">
         <div className='upload-dropbox'>
           <input
@@ -125,7 +124,6 @@ function UploadPage() {
 
         {result && (
           <div className="result">
-            <h2>Result</h2>
             <p>{result.name}</p>
           </div>
         )}
