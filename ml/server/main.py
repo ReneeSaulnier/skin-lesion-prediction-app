@@ -6,7 +6,7 @@ import torch
 import os
 
 # Model config
-model_path = "model/"
+model_path = "../model"
 
 # Load the model and processor
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

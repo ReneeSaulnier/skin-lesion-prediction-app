@@ -1,30 +1,40 @@
 import React from 'react';
-import { predictImage } from '../api/index';
 import { useLocation } from 'react-router-dom';
+import '../styles/ResultPage.css';
 
 function ResultPage() {
   const location = useLocation();
-  const { file } = location.state || {}; // Get the file passed via state
+  const { result } = location.state || {};
 
-  const handleProcessFile = () => {
-    if (file) {
-        // Call my api
-        predictImage(file);
-      console.log('Processing file:', file);
-    }
-  };
+  if (!result) {
+    return (
+      <div className="result-page">
+        <div className="result-card">
+          <h1 className="result-title">No result available.</h1>
+          <button className="btn-go-back" onClick={handleGoBack}>
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const { predicted_class, confidence } = result;
 
   return (
-    <div>
-      <h1>Result Page</h1>
-      {file ? (
-        <div>
-          <p>Uploaded File: {file.name}</p>
-          <button onClick={handleProcessFile}>Process File</button>
+    <div className="result-page">
+      <div className="result-card">
+        <h1 className="result-title">Prediction Result</h1>
+        
+        <div className="prediction-info">
+          <p>
+            <span className="label">Predicted Class:</span> {predicted_class}
+          </p>
+          <p>
+            <span className="label">Confidence:</span> {(confidence * 100).toFixed(2)}%
+          </p>
         </div>
-      ) : (
-        <p>No file was uploaded!</p>
-      )}
+      </div>
     </div>
   );
 }

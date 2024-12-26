@@ -2,16 +2,14 @@ import React, { useState } from 'react';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
+import UploadApi from '../api/upload';
+import PredictApi from '../api/predict';
 import '../styles/UploadPage.css';
 
 function UploadPage() {
 
   const [file, setFile] = useState('');
   const [error, setError] = useState(''); 
-  const [result, setResult] = useState('');
-  const uploadUrl = 'http://localhost:8080/api/upload';
-  const predictUrl = 'http://localhost:8080/api/predict';
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
@@ -34,8 +32,20 @@ function UploadPage() {
 
     if (file) {
       try {
-        uploadFile(file);
-        predictFile(file)
+        // Call the upload API
+        await UploadApi(file);
+
+        // Call the predict API
+        const predictResponse = await PredictApi(file);
+        
+        // Navigate and pass the result to the ResultPage
+        if (predictResponse) {
+          // Parse the nested json string
+          const parsedPrediction = JSON.parse(predictResponse.prediction);
+          navigate('/ResultPage', { state: { result: parsedPrediction } });
+        } else {
+          setError('No prediction response received.');
+        }
       } catch (error) {
         console.error(error);
         setError('An error occurred while processing the file');
@@ -44,53 +54,6 @@ function UploadPage() {
       setError('Please select a file to upload!');
     }
   }
-
-
-  const uploadFile = async (file) => { 
-    const formData = new FormData(); 
-    try {
-      formData.append('file', file);
-
-      // Send the FormData
-      const response = await axios.post(uploadUrl, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'accept': '*/*',
-        },
-      });
-  
-      console.log('File uploaded successfully:', response.data);
-    } catch (error) {
-      console.error('Error uploading file:', error.response || error.message);
-    }
-  };
-
-  const predictFile = async (file) => {
-    console.log('Predicting file:', file);
-    console.log('Predicting file name:', file.name);
-    const formData = new FormData();
-    try {
-      formData.append('imagePath', file.name);
-
-      // Log the formData
-      for (var pair of formData.entries()) {
-        console.log(pair[0] + ', ' + pair[1]);
-      }
-
-      // Send the FormData
-      const response = await axios.post(predictUrl, formData, {
-        headers: {
-          'accept': '*/*',
-        },
-      });
-
-      console.log('Prediction:', response.data);
-      setResult(response.data);
-    } catch (error) {
-      console.error('Error predicting file:', error.response || error.message);
-    }
-  };
-
 
   return (
     <div className="upload-page">
@@ -121,12 +84,6 @@ function UploadPage() {
             <p className="error-message">{error}</p>
           )}
         </div>
-
-        {result && (
-          <div className="result">
-            <p>{result.name}</p>
-          </div>
-        )}
       </div>
     </div>
   );
