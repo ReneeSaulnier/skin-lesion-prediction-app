@@ -7,23 +7,25 @@ namespace api.Service
 {
     public class MlService
     {
-       private readonly MlConfig _config;
+       private readonly MlConfig _mlConfig;
+       private readonly FileConfig _fileConfig;
        private readonly HttpClient _httpClient;
        private readonly ILogger<MlService> _logger;
 
-       public MlService(IOptions<MlConfig> config, ILogger<MlService> logger)
+       public MlService(IOptions<MlConfig> mlConfig, IOptions<FileConfig> fileConfig, ILogger<MlService> logger)
        {
-           _config = config.Value;
+           _mlConfig = mlConfig.Value;
+           _fileConfig = fileConfig.Value;
            _logger = logger;
            
-           if (string.IsNullOrEmpty(_config.BaseUrl))
+           if (string.IsNullOrEmpty(_mlConfig.BaseUrl))
            {
                throw new ArgumentException("Base url is required");
            }
            
            _httpClient = new HttpClient();
-           _httpClient.BaseAddress = new Uri(_config.BaseUrl);
-           _logger.LogInformation($"BaseUrl: {_config.BaseUrl}");
+           _httpClient.BaseAddress = new Uri(_mlConfig.BaseUrl);
+           _logger.LogInformation($"BaseUrl: {_mlConfig.BaseUrl}");
        }
 
        public async Task<string> PredictAsync(string imagePath)
@@ -31,10 +33,10 @@ namespace api.Service
            try
            {
                // Construct the query string
-               string imagePath1 = "/shared/images/" + imagePath;
-               var requestUri = $"api/predict?image_path={Uri.EscapeDataString(imagePath1)}";
+               var requestUri = $"api/predict?image_path={Uri.EscapeDataString(_fileConfig.MountSharePath + imagePath)}";
 
-               // Make the GET request
+               // Make the GET request, 
+               // Content is null because its being passed in the requesturi
                var response = await _httpClient.PostAsync(requestUri, null);
 
                if (response.IsSuccessStatusCode)
