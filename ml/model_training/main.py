@@ -7,6 +7,7 @@ from PIL import Image
 from transformers import ResNetForImageClassification, AutoImageProcessor, Trainer, TrainingArguments, DefaultDataCollator
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
 
 # Load the config file
@@ -41,9 +42,7 @@ y_train_numeric = np.array([class_to_idx[label] for label in y_train], dtype=np.
 y_test_numeric = np.array([class_to_idx[label] for label in y_test], dtype=np.int64)
 
 processor = AutoImageProcessor.from_pretrained(model_name)
-model = ResNetForImageClassification._from_config(
-    ResNetForImageClassification.config_class(num_labels=num_of_classes)
-)
+model = ResNetForImageClassification.from_pretrained(model_name)
 
 class SkinCancerDataset(Dataset):
     def __init__(self, image_paths, labels, processor):
@@ -85,6 +84,9 @@ training_args = TrainingArguments(
     output_dir=output_path,
     evaluation_strategy="epoch",
     save_strategy="epoch",
+    load_best_model_at_end=True,
+    metric_for_best_model="eval_accuracy",
+    greater_is_better=True,
     learning_rate=5e-5,
     per_device_train_batch_size=32,
     per_device_eval_batch_size=32,
@@ -96,6 +98,28 @@ training_args = TrainingArguments(
     push_to_hub=False
 )
 
+def compute_metrics(eval_pred):
+    """
+    eval_pred is a tuple: (logits, labels)
+    where logits are the raw, unnormalized model outputs.
+    """
+    logits, labels = eval_pred
+    # Get the predicted class by taking the argmax over logits
+    predictions = np.argmax(logits, axis=-1)
+    
+    # Calculate metrics
+    precision, recall, f1, _ = precision_recall_fscore_support(
+        labels, predictions, average='weighted'
+    )
+    acc = accuracy_score(labels, predictions)
+    
+    return {
+        'accuracy': acc,
+        'f1': f1,
+        'precision': precision,
+        'recall': recall
+    }
+
 data_collator = DefaultDataCollator()
 
 trainer = Trainer(
@@ -104,16 +128,13 @@ trainer = Trainer(
     train_dataset=train_dataset,
     eval_dataset=test_dataset,
     tokenizer=processor,  # The processor works as a tokenizer here
-    data_collator=data_collator
+    data_collator=data_collator,
+    compute_metrics=compute_metrics,
 )
+
+if not os.path.exists(os.path.join(output_path, model_name)):
+    os.makedirs(os.path.join(output_path, model_name))
 
 trainer.train()
 
-eval_results = trainer.evaluate()
-print(f"Evaluation results: {eval_results}")
-# Extract and print accuracy
-accuracy = eval_results.get("eval_accuracy")
-print(f"Accuracy: {accuracy}")
-
-trainer.save_model(output_path)
-
+trainer.save_model(os.path.join(output_path, model_name))
