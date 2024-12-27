@@ -67,6 +67,11 @@ def merge_image_and_metadata_df(image_df, metadata_df):
 
 if combing_image_and_metadata:
     merged_df = merge_image_and_metadata_df(image_df, metadata_df)
+
+    # Make a processed data path
+    if not os.path.exists(processed_path):
+        os.makedirs(processed_path)
+
     # Export the final df
     merged_df.to_csv(os.path.join(processed_path, 'merged_data.csv'), index=False)
     print('Combining image and metadata df')
