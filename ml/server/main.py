@@ -4,16 +4,23 @@ from PIL import Image
 import torch.nn.functional as F
 import torch
 import os
+import yaml
+
+# Load the config file
+config_path = "../config/config.yaml"
+with open(config_path, "r") as file:
+    config = yaml.safe_load(file)
 
 # Model config
-model_path = "../model"
+model_folder = config['server']['model']['path']
+model_name = config['server']['model']['name']
 
 # Load the model and processor
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load model and processor
-model = AutoModelForImageClassification.from_pretrained(model_path)
-processor = AutoImageProcessor.from_pretrained(model_path)
+model = AutoModelForImageClassification.from_pretrained(os.path.join(model_folder, model_name))
+processor = AutoImageProcessor.from_pretrained(os.path.join(model_folder, model_name))
 model.to(device)
 model.eval()
 

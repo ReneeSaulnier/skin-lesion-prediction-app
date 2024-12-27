@@ -22,3 +22,14 @@ model_training:
 model_validation:
   model:
     path: "model/"
+    name: "microsoft/resnet-50"
+  test_data:
+    path: "data/processed"
+  logs:
+    metrics: "logs/metrics/"
+    roc_curve: "logs/roc_curve/"
+
+server:
+  model:
+    path: "../model"
+    name: "microsoft/resnet-50"
