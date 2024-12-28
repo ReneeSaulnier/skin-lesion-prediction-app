@@ -8,6 +8,10 @@ data_processing:
     image_path_1: "data/raw/HAM10000_images_part_1"
     image_path_2: "data/raw/ham10000_images_part_2"
     processed_path: "data/processed"
+  dataset_size:
+    train: 0.80
+    validation: 0.125
+    test: 0.20
   combine_image_df: True
   combing_image_and_metadata: True
 

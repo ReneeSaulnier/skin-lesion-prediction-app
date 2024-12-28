@@ -21,6 +21,12 @@ processed_path = config['data_processing']['path']['processed_path']
 combine_image_df = config['data_processing']['combine_image_df']
 combing_image_and_metadata = config['data_processing']['combing_image_and_metadata']
 
+# Dataset size config
+train_dataset_size =  config['data_processing']['dataset_size']['train']
+validation_dataset_size = config['data_processing']['dataset_size']['validation']
+test_dataset_size = config['data_processing']['dataset_size']['test']
+
+
 def load_image_paths_into_single_df(path):
     """
     Load the image paths into a dataframe without loading the actual images.
@@ -83,19 +89,32 @@ else:
 X = merged_df['image_path']  # X = Features (images)
 y = merged_df['dx']     # y = Target (diagnosis) 7 classes total
 
-X_train_df, X_test_df, y_train_df, y_test_df = train_test_split(
+
+
+# => X_val = 10% of total dataset
+# => X_train = 70% of total dataset
+# => X_test  = 20% of total dataset
+X_temp, X_test, y_temp, y_test = train_test_split(
     X,
     y,
-    test_size=0.2,
+    test_size=test_dataset_size,
+    random_state=42
+)
+
+X_train, X_val, y_train, y_val = train_test_split(
+    X_temp, y_temp, 
+    test_size=validation_dataset_size,
     random_state=42
 )
 
 # Save arrays as .npy for lower computation time
-np.save(os.path.join(processed_path, 'X_train.npy'), X_train_df)
-np.save(os.path.join(processed_path, 'X_test.npy'), X_test_df)
+np.save(os.path.join(processed_path, 'X_train.npy'), X_train)
+np.save(os.path.join(processed_path, 'X_val.npy'), X_val)
+np.save(os.path.join(processed_path, 'X_test.npy'), X_test)
 
 # Save labels as CSV
-y_train_df.to_csv(os.path.join(processed_path, 'y_train.csv'), index=False)
-y_test_df.to_csv(os.path.join(processed_path, 'y_test.csv'), index=False)
+y_train.to_csv(os.path.join(processed_path, 'y_train.csv'), index=False)
+y_val.to_csv(os.path.join(processed_path, 'y_val.csv'), index=False)
+y_test.to_csv(os.path.join(processed_path, 'y_test.csv'), index=False)
 
 print(f"Train and test sets saved in {processed_path}")
