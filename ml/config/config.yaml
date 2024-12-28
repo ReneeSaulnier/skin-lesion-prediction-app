@@ -18,7 +18,6 @@ data_processing:
 model_training:
   model:
     name: "microsoft/resnet-50"
-    num_of_classes: 7
     output_path: "model/"
   logs:
     path: "logs"

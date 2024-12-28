@@ -4,9 +4,8 @@ import os
 import pandas as pd
 import numpy as np
 from PIL import Image
-from transformers import ResNetForImageClassification, AutoImageProcessor, Trainer, TrainingArguments, DefaultDataCollator
+from transformers import ResNetForImageClassification, AutoImageProcessor, Trainer, TrainingArguments
 from torch.utils.data import Dataset
-from torch.utils.data import DataLoader
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
 
@@ -17,26 +16,30 @@ with open(config_path, "r") as file:
 
 # Model config
 model_name = config['model_training']['model']['name']
-num_of_classes = config['model_training']['model']['num_of_classes']
 output_path = config['model_training']['model']['output_path']
 model_result_log = config['model_training']['logs']['path']
 
 # Path config
 processed_path = config['data_processing']['path']['processed_path']
 X_train_path = os.path.join(processed_path, 'X_train.npy')
+X_val_path = os.path.join(processed_path, 'x_val.npy')
 X_test_path = os.path.join(processed_path, 'X_test.npy')
 y_train_path = os.path.join(processed_path, 'y_train.csv')
+y_val_path = os.path.join(processed_path, 'y_val.csv')
 y_test_path = os.path.join(processed_path, 'y_test.csv')
 
 # Load data
 X_train = np.load(X_train_path, allow_pickle=True)
+X_val = np.load(X_val_path, allow_pickle=True)
 X_test = np.load(X_test_path, allow_pickle=True)
 y_train = pd.read_csv(y_train_path)['dx'].values
+y_val = pd.read_csv(y_val_path)['dx'].values
 y_test = pd.read_csv(y_test_path)['dx'].values
 merged_df = pd.read_csv(os.path.join(processed_path, "merged_data.csv"))
 
 # Get the unique labels (predictions)
 class_names = np.unique(y_train)
+print(class_names)
 class_to_idx = {cls: i for i, cls in enumerate(class_names)}
 y_train_numeric = np.array([class_to_idx[label] for label in y_train], dtype=np.int64)
 y_test_numeric = np.array([class_to_idx[label] for label in y_test], dtype=np.int64)
@@ -76,9 +79,6 @@ class SkinCancerDataset(Dataset):
     
 train_dataset = SkinCancerDataset(X_train, y_train_numeric, processor)
 test_dataset = SkinCancerDataset(X_test, y_test_numeric, processor)
-
-train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-test_dataloader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
 training_args = TrainingArguments(
     output_dir=output_path,
@@ -120,21 +120,18 @@ def compute_metrics(eval_pred):
         'recall': recall
     }
 
-data_collator = DefaultDataCollator()
-
 trainer = Trainer(
     model=model,
     args=training_args,
     train_dataset=train_dataset,
     eval_dataset=test_dataset,
     tokenizer=processor,  # The processor works as a tokenizer here
-    data_collator=data_collator,
     compute_metrics=compute_metrics,
 )
 
+trainer.train()
+
 if not os.path.exists(os.path.join(output_path, model_name)):
     os.makedirs(os.path.join(output_path, model_name))
-
-trainer.train()
 
 trainer.save_model(os.path.join(output_path, model_name))
