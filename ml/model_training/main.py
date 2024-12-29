@@ -42,6 +42,7 @@ class_names = np.unique(y_train)
 print(class_names)
 class_to_idx = {cls: i for i, cls in enumerate(class_names)}
 y_train_numeric = np.array([class_to_idx[label] for label in y_train], dtype=np.int64)
+y_val_numeric = np.array([class_to_idx[label] for label in y_val], dtype=np.int64)
 y_test_numeric = np.array([class_to_idx[label] for label in y_test], dtype=np.int64)
 
 processor = AutoImageProcessor.from_pretrained(model_name)
@@ -78,24 +79,25 @@ class SkinCancerDataset(Dataset):
         }
     
 train_dataset = SkinCancerDataset(X_train, y_train_numeric, processor)
+val_dataset = SkinCancerDataset(X_val,y_val_numeric, processor)
 test_dataset = SkinCancerDataset(X_test, y_test_numeric, processor)
 
 training_args = TrainingArguments(
     output_dir=output_path,
-    evaluation_strategy="epoch",
-    save_strategy="epoch",
-    load_best_model_at_end=True,
-    metric_for_best_model="eval_accuracy",
-    greater_is_better=True,
-    learning_rate=5e-5,
-    per_device_train_batch_size=32,
-    per_device_eval_batch_size=32,
-    num_train_epochs=10,
-    weight_decay=0.01,
-    logging_dir=model_result_log,
-    logging_steps=10,
-    save_total_limit=2,
-    push_to_hub=False
+    evaluation_strategy='epoch',      # Evaluate at the end of each epoch
+    save_strategy='epoch',            # Save model at each epoch
+    learning_rate=5e-5,               # Typical fine-tuning learning rate
+    per_device_train_batch_size=16,   # Adjust based on memory
+    per_device_eval_batch_size=16,
+    num_train_epochs=5,               # Train for 5 epochs
+    weight_decay=0.01,                # Regularization
+    warmup_ratio=0.1,                 # Warmup for 10% of training steps
+    logging_dir=model_result_log,     # Directory for logs
+    logging_steps=10,                 # Log every 10 steps
+    save_total_limit=2,               # Keep only the 2 most recent models
+    load_best_model_at_end=True,      # Automatically load the best model
+    metric_for_best_model='precision', # Metric for model selection
+    greater_is_better=True,           # Optimize for a higher metric
 )
 
 def compute_metrics(eval_pred):
@@ -124,7 +126,7 @@ trainer = Trainer(
     model=model,
     args=training_args,
     train_dataset=train_dataset,
-    eval_dataset=test_dataset,
+    eval_dataset=val_dataset,
     tokenizer=processor,  # The processor works as a tokenizer here
     compute_metrics=compute_metrics,
 )
