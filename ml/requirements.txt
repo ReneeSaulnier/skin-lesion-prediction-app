@@ -10,3 +10,4 @@ fastapi==0.112.2
 uvicorn==0.34.0
 matplotlib==3.9.2
 seaborn==0.13.2
+keras==3.6.0
