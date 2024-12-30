@@ -7,7 +7,9 @@ data_processing:
     metadata_path: "data/raw/HAM10000_metadata.csv"
     image_path_1: "data/raw/HAM10000_images_part_1"
     image_path_2: "data/raw/ham10000_images_part_2"
+    image_path: "data/raw/images"
     processed_path: "data/processed"
+  merge_folder: False
   dataset_size:
     train: 0.80
     validation: 0.125

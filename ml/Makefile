@@ -20,7 +20,7 @@ data_processing:
 .PHONY: model_training
 model_training:
 	@echo "Training Model..."
-	python3 model_training/main.py
+	python3 model_training/main1.py
 
 ###################################################################
 # Model Validation
