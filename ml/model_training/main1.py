@@ -1,12 +1,13 @@
-import tensorflow as tf
-import matplotlib.pyplot as plt
 import yaml
 import os
 import numpy as np
 import pandas as pd
-from torch.utils.data import Dataset
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.utils.data import Dataset, DataLoader
+import torch.optim as optim
 from torchvision.io import read_image
-from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 
 
@@ -25,6 +26,8 @@ combine_image_flag = config['data_processing']['merge_folder']
 # Dataset size config
 validation_dataset_size = config['data_processing']['dataset_size']['validation']
 test_dataset_size = config['data_processing']['dataset_size']['test']
+# Model config
+model_path = config['model_training']['model']['custom_model']
 
 # Combine the images into one folder <<< Run this only once, set the flag in config to False after running >>>
 def combine_images(image_path_1, image_path_2):
@@ -67,8 +70,13 @@ class SkinCancerDataset(Dataset):
     # then gets the corresponding label and then returns a tensor image and label tuple.
     def __getitem__(self, idx):
         image_path = os.path.join(final_image_path, self.image_labels.iloc[idx, 0])
-        image = read_image(image_path)
-        label = self.image_labels.iloc[idx, 1]
+
+        # read_image is default an 8 bit int. We need to convert to 
+        # float (32 bit) and normalize to [0, 1]
+        image = read_image(image_path).float() / 255.0
+        class_to_idx = {'akiec': 0, 'bcc': 1, 'bkl': 2, 'df': 3, 'mel': 4, 'nv': 5, 'vasc': 6}
+        label = class_to_idx[self.image_labels.iloc[idx, 1]]
+
         if self.transform:
             image = self.transform(image)
         if self.target_transform:
@@ -106,18 +114,11 @@ def build_df(folder_path, metadata_path):
 
 image_df = build_df(final_image_path, metadata_path)
 
-print(image_df.head())
-
 # Split the images for train/val/test
 X = image_df['image_id']
 y = image_df['dx']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_dataset_size, random_state=42)
 X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=validation_dataset_size, random_state=42)
-
-# # Validate the sizes
-# print(f"Train size: {len(X_train)}")
-# print(f"Validation size: {len(X_val)}")
-# print(f"Test size: {len(X_test)}")
 
 train_df = pd.DataFrame({'image_path': X_train, 'dx': y_train})
 val_df = pd.DataFrame({'image_path': X_val, 'dx': y_val})
@@ -133,13 +134,70 @@ train_loader = DataLoader(train_dataloader, batch_size=32, shuffle=True)
 validation_loader = DataLoader(validation_dataloader, batch_size=32, shuffle=True)
 test_loader = DataLoader(test_dataloader, batch_size=32, shuffle=True)
 
-# Display the image and corresponding label
-train_features, train_labels = next(iter(train_loader))
-print(f"Feature batch shape: {train_features.size()}")
-img = train_features[0]     # shape [3, 450, 600]
-img = img.permute(1, 2, 0)  # now shape [450, 600, 3]
-label = train_labels[0]
-plt.imshow(img)
-plt.show()
-print(f"Label: {label}")
+# Create the model
+class Cnn(nn.Module):
+    def __init__(self):
+        super(Cnn, self).__init__()
+        self.conv1 = nn.Conv2d(3, 6, 5)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.conv2 = nn.Conv2d(6, 16, 5)
+        self.fc1 = nn.Linear(16 * 109 * 147, 120)
+        self.fc2 = nn.Linear(120, 84)
+        self.fc3 = nn.Linear(84, 7)
 
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = torch.flatten(x, 1) # flatten all dimensions except batch
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+    
+model = Cnn()
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Train the model
+for epoch in range(2):  # loop over the dataset multiple times
+
+    running_loss = 0.0
+    for i, data in enumerate(train_loader, 0):
+        # get the inputs; data is a list of [inputs, labels]
+        inputs, labels = data
+
+        # zero the parameter gradients
+        optimizer.zero_grad()
+
+        # forward + backward + optimize
+        outputs = model(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+        # print statistics
+        running_loss += loss.item()
+        if i % 2000 == 1999:    # print every 2000 mini-batches
+            print('[%d, %5d] loss: %.3f' %
+                  (epoch + 1, i + 1, running_loss / 2000))
+            running_loss = 0.0
+
+print('Finished Training')
+
+# Save the model
+PATH = os.path.join(model_path, 'custom_model.pth')
+torch.save(model.state_dict(), PATH)
+
+# Test the model
+correct = 0
+total = 0
+with torch.no_grad():
+    for data in test_loader:
+        images, labels = data
+        outputs = model(images)
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+print('Accuracy of the network on the test images: %d %%' % (
+    100 * correct / total))

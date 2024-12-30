@@ -20,6 +20,7 @@ data_processing:
 model_training:
   model:
     name: "microsoft/resnet-50"
+    custom_model: 'custom_model'
     output_path: "model/"
   logs:
     path: "logs"
