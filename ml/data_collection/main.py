@@ -14,11 +14,6 @@ download_path = config["data_collection"]["download_path"]
 # Download the dataset (to kagglehub's default cache path)
 cached_path = kagglehub.dataset_download(dataset)
 
-# Remove the contents of the cache directory
-if os.path.exists(cached_path):
-    shutil.rmtree(cached_path)
-    os.makedirs(cached_path)
-
 # Create a download path
 if not os.path.exists(download_path):
     os.makedirs(download_path)
