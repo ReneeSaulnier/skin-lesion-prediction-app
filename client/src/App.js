@@ -4,11 +4,13 @@ import LandingPage from './pages/LandingPage';
 import UploadPage from './pages/UploadPage';
 import ResultPage from './pages/ResultPage';
 import LearnMore from './pages/LearnMore';
+import Navbar from './components/Navbar';
 
 function App() {
   return (
     <Router>
-      <div className="App">
+      <div classNames="App">
+        <Navbar />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/UploadPage" element={<UploadPage />} />

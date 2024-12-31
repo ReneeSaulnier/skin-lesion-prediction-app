@@ -9,19 +9,28 @@ body {
   height: 100vh;
 }
 
+.navbar {
+  position: fixed;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 60px;
+  box-sizing: border-box;
+  z-index: 9999;
+}
+
 /* App Container */
 .app {
   text-align: center;
-  background: #2b2b40; /* Dark card background */
   padding: 30px;
-  border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  width: 400px;
+  width: 300px;
 }
 
 h1 {
   margin-bottom: 20px;
-  font-size: 24px;
+  font-size: 22px;
   color: #ffffff; /* Pure white for titles */
 }
 
