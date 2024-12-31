@@ -5,12 +5,14 @@ import UploadPage from './pages/UploadPage';
 import ResultPage from './pages/ResultPage';
 import LearnMore from './pages/LearnMore';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 function App() {
   return (
     <Router>
       <div classNames="App">
         <Navbar />
+        <Footer />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/UploadPage" element={<UploadPage />} />

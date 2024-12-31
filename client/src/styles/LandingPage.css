@@ -1,7 +1,7 @@
 /* Container */
 .landing-page {
   height: 100vh;
-  width: 200vh;
+  width: 100vw;
   background-image: url("../../public/assets/landing_page_image.jpg");
   background-size: cover;
   background-position: center;
