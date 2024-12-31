@@ -27,7 +27,7 @@ combine_image_flag = config['data_processing']['merge_folder']
 validation_dataset_size = config['data_processing']['dataset_size']['validation']
 test_dataset_size = config['data_processing']['dataset_size']['test']
 # Model config
-model_path = config['model_training']['model']['custom_model']
+model_output_path = config['model_training']['model']['output_path']
 
 # Combine the images into one folder <<< Run this only once, set the flag in config to False after running >>>
 def combine_images(image_path_1, image_path_2):
@@ -48,6 +48,8 @@ if combine_image_flag:
     final_image_path = combine_images(image_path_1, image_path_2)
 else:
     final_image_path = image_output_path
+
+class_to_idx = {'akiec': 0, 'bcc': 1, 'bkl': 2, 'df': 3, 'mel': 4, 'nv': 5, 'vasc': 6}
 
 # Load the dataset
 class SkinCancerDataset(Dataset):
@@ -74,7 +76,6 @@ class SkinCancerDataset(Dataset):
         # read_image is default an 8 bit int. We need to convert to 
         # float (32 bit) and normalize to [0, 1]
         image = read_image(image_path).float() / 255.0
-        class_to_idx = {'akiec': 0, 'bcc': 1, 'bkl': 2, 'df': 3, 'mel': 4, 'nv': 5, 'vasc': 6}
         label = class_to_idx[self.image_labels.iloc[idx, 1]]
 
         if self.transform:
@@ -159,7 +160,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # Train the model
-for epoch in range(2):  # loop over the dataset multiple times
+for epoch in range(5):  # loop over the dataset multiple times
 
     running_loss = 0.0
     for i, data in enumerate(train_loader, 0):
@@ -177,7 +178,7 @@ for epoch in range(2):  # loop over the dataset multiple times
 
         # print statistics
         running_loss += loss.item()
-        if i % 2000 == 1999:    # print every 2000 mini-batches
+        if i % 1000 == 999:
             print('[%d, %5d] loss: %.3f' %
                   (epoch + 1, i + 1, running_loss / 2000))
             running_loss = 0.0
@@ -185,7 +186,7 @@ for epoch in range(2):  # loop over the dataset multiple times
 print('Finished Training')
 
 # Save the model
-PATH = os.path.join(model_path, 'custom_model.pth')
+PATH = os.path.join(model_output_path, 'custom', 'custom_model.pth')
 torch.save(model.state_dict(), PATH)
 
 # Test the model
