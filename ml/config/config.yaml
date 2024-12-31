@@ -37,6 +37,6 @@ model_validation:
 
 server:
   model:
-    path: "../model"
+    path: "model"
     name: "microsoft/resnet-50"
     custom_model: "custom/custom_model.pth"
