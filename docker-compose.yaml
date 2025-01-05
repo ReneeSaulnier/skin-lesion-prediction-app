@@ -1,7 +1,7 @@
 services:
   csharp-backend:
     build:
-      context: ./api/  # Path to the app
+      context: ./api/
     container_name: csharp-backend
     ports:
       - "8080:8080"
@@ -11,7 +11,7 @@ services:
       - image-storage:/shared/images
   ml:
     build:
-      context: ./ml/  # Path to the app
+      context: ./ml/pretrained_pipeline/  # Specify the path to the custom or pretrained model
     container_name: ml
     ports:
       - "8000:8000"
@@ -21,7 +21,7 @@ services:
       - image-storage:/shared/images
   client:
     build:
-      context: ./client/  # Path to the app
+      context: ./client/
     container_name: fontend
     ports:
       - "3000:3000"

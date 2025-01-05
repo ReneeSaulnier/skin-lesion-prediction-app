@@ -8,7 +8,7 @@ data_processing:
     image_path_1: "data/raw/HAM10000_images_part_1"
     image_path_2: "data/raw/ham10000_images_part_2"
     processed_path: "data/processed"
-  merge_folder: False
+  merge_folder: True
   dataset_size:
     validation: 0.125
     test: 0.20
