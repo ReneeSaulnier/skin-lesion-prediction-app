@@ -7,7 +7,7 @@ data_processing:
     metadata_path: "data/raw/HAM10000_metadata.csv"
     image_path_1: "data/raw/HAM10000_images_part_1"
     image_path_2: "data/raw/ham10000_images_part_2"
-    image_path: "data/raw/images"
+    image_path: "data/processed/images"
     processed_path: "data/processed"
   merge_folder: False
   dataset_size:
@@ -18,9 +18,13 @@ data_processing:
   combing_image_and_metadata: True
 
 model_training:
+  path:
+    image_path: "data/processed/images"
+    train_data: "data/processed/train.csv"
+    val_data: "data/processed/val.csv"
+    test_data: "data/processed/test.csv"
   model:
-    name: "microsoft/resnet-50"
-    custom_model: "custom_model"
+    output_name: "custom_model.pth"
     output_path: "model/"
   logs:
     path: "logs"
@@ -28,7 +32,7 @@ model_training:
 model_validation:
   model:
     path: "model/"
-    name: "microsoft/resnet-50"
+    name: "custom_model.pth"
   test_data:
     path: "data/processed"
   logs:
@@ -38,5 +42,4 @@ model_validation:
 server:
   model:
     path: "model"
-    name: "microsoft/resnet-50"
-    custom_model: "custom/custom_model.pth"
+    custom_model: "custom_model.pth"

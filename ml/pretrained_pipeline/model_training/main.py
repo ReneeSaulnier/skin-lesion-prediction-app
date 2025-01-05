@@ -22,7 +22,7 @@ model_result_log = config['model_training']['logs']['path']
 # Path config
 processed_path = config['data_processing']['path']['processed_path']
 X_train_path = os.path.join(processed_path, 'X_train.npy')
-X_val_path = os.path.join(processed_path, 'x_val.npy')
+X_val_path = os.path.join(processed_path, 'X_val.npy')
 X_test_path = os.path.join(processed_path, 'X_test.npy')
 y_train_path = os.path.join(processed_path, 'y_train.csv')
 y_val_path = os.path.join(processed_path, 'y_val.csv')
@@ -79,7 +79,7 @@ class SkinCancerDataset(Dataset):
         }
     
 train_dataset = SkinCancerDataset(X_train, y_train_numeric, processor)
-val_dataset = SkinCancerDataset(X_val,y_val_numeric, processor)
+val_dataset = SkinCancerDataset(X_val, y_val_numeric, processor)
 test_dataset = SkinCancerDataset(X_test, y_test_numeric, processor)
 
 training_args = TrainingArguments(
@@ -127,7 +127,7 @@ trainer = Trainer(
     args=training_args,
     train_dataset=train_dataset,
     eval_dataset=val_dataset,
-    tokenizer=processor,  # The processor works as a tokenizer here
+    tokenizer=processor,
     compute_metrics=compute_metrics,
 )
 

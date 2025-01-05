@@ -20,7 +20,7 @@ data_processing:
 .PHONY: model_training
 model_training:
 	@echo "Training Model..."
-	python3 model_training/main1.py
+	python3 model_training/main.py
 
 ###################################################################
 # Model Validation
@@ -36,7 +36,14 @@ model_validation:
 .PHONY: all
 all:
 	@echo "Running the pipeline..."
-	python3 pipeline/pipeline_config/main.py
+	python3 data_collection/main.py
+	@echo "Data collection completed..."
+	python3 data_processing/main.py
+	@echo "Data processing completed..."
+	python3 model_training/main.py
+	@echo "Model training completed..."
+	python3 model_validation/main.py
+	@echo "Model validation completed..."
 
 ###################################################################
 # Help

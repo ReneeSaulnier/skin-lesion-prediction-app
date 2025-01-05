@@ -1,0 +1,38 @@
+data_collection:
+  dataset: "kmader/skin-cancer-mnist-ham10000"
+  download_path: "data/raw"
+
+data_processing:
+  path:
+    metadata_path: "data/raw/HAM10000_metadata.csv"
+    image_path_1: "data/raw/HAM10000_images_part_1"
+    image_path_2: "data/raw/ham10000_images_part_2"
+    processed_path: "data/processed"
+  merge_folder: False
+  dataset_size:
+    validation: 0.125
+    test: 0.20
+  combine_image_df: True
+  combing_image_and_metadata: True
+
+model_training:
+  model:
+    name: "microsoft/resnet-50"
+    output_path: "model/"
+  logs:
+    path: "logs"
+
+model_validation:
+  model:
+    path: "model/"
+    name: "microsoft/resnet-50"
+  test_data:
+    path: "data/processed"
+  logs:
+    metrics: "logs/metrics/"
+    roc_curve: "logs/roc_curve/"
+
+server:
+  model:
+    path: "model"
+    name: "microsoft/resnet-50"

@@ -22,7 +22,6 @@ combine_image_df = config['data_processing']['combine_image_df']
 combing_image_and_metadata = config['data_processing']['combing_image_and_metadata']
 
 # Dataset size config
-train_dataset_size =  config['data_processing']['dataset_size']['train']
 validation_dataset_size = config['data_processing']['dataset_size']['validation']
 test_dataset_size = config['data_processing']['dataset_size']['test']
 
@@ -33,6 +32,11 @@ def load_image_paths_into_single_df(path):
     :param path: str: path to the image directory
     :return: pd.DataFrame: dataframe of image paths
     """
+
+    if not os.path.exists(path):
+        print(f"{path} does not exists, its likely the folders have already been combined.. Switch both falgs to False in config")
+        return
+    
     image_paths = []
     for file_name in os.listdir(path):
         if file_name.endswith(('.jpg', '.png', '.jpeg')):
