@@ -9,7 +9,6 @@ function Navbar() {
         <Link to="/" className="logo-text">Dermalytics</Link>
       </div>
       <div className="nav-links">
-        <Link to="/UploadPage" className="nav-link">Get Started</Link>
         <Link to="/LearnMore" className="nav-link">Learn More</Link>
         <Link to="/Contact" className="nav-link">Contact</Link>
       </div>

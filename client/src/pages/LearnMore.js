@@ -5,6 +5,7 @@ function LearnMore() {
     return (
         <div className="learn-more">
             <div className="learn-more-section">
+                <p>Hi there..</p>
             </div>  
         </div>
     );

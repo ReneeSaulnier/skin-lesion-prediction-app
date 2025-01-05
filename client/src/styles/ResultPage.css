@@ -63,3 +63,51 @@
   background-color: #f7597e;
   transform: translateY(-2px);
 }
+
+.upload-section {
+  margin: 20px 0;
+}
+
+/* Upload Box */
+.upload-box {
+  border: 2px dashed #5f5f7a;
+  padding: 20px;
+  cursor: pointer;
+  color: #a1a1b8;
+  font-size: 16px;
+  text-align: center;
+  border-radius: 8px;
+  background: #2f2f44;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.upload-box:hover {
+  border-color: #4d90fe; /* Blue hover effect */
+  background-color: #3a3a56;
+}
+
+/* Hidden File Input */
+#file-input {
+  display: none;
+}
+
+/* Predict Button */
+.predict-button {
+  background-color: #4d90fe; /* Vibrant blue button */
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.predict-button:hover {
+  background-color: #357ae8;
+}
+
+.predict-button:disabled {
+  background-color: #4d4d5e; /* Disabled button color */
+  cursor: not-allowed;
+}

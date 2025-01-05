@@ -9,28 +9,6 @@ body {
   height: 100vh;
 }
 
-.navbar {
-  position: fixed;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 60px;
-  box-sizing: border-box;
-  z-index: 9999;
-}
-
-.footer-content {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  padding: 20px 0;
-  color: #444;
-  z-index: 10;
-  font-size: 13px;
-}
 /* App Container */
 .app {
   text-align: center;
@@ -44,54 +22,6 @@ h1 {
   margin-bottom: 20px;
   font-size: 22px;
   color: #ffffff;
-}
-
-.upload-section {
-  margin: 20px 0;
-}
-
-/* Upload Box */
-.upload-box {
-  border: 2px dashed #5f5f7a;
-  padding: 20px;
-  cursor: pointer;
-  color: #a1a1b8;
-  font-size: 16px;
-  text-align: center;
-  border-radius: 8px;
-  background: #2f2f44;
-  transition: border-color 0.3s ease, background-color 0.3s ease;
-}
-
-.upload-box:hover {
-  border-color: #4d90fe; /* Blue hover effect */
-  background-color: #3a3a56;
-}
-
-/* Hidden File Input */
-#file-input {
-  display: none;
-}
-
-/* Predict Button */
-.predict-button {
-  background-color: #4d90fe; /* Vibrant blue button */
-  color: #ffffff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.predict-button:hover {
-  background-color: #357ae8;
-}
-
-.predict-button:disabled {
-  background-color: #4d4d5e; /* Disabled button color */
-  cursor: not-allowed;
 }
 
 /* Result Section */
