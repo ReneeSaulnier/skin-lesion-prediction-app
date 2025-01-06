@@ -7,7 +7,7 @@ import os
 import yaml
 
 # Load the config file
-config_path = "../config/config.yaml"
+config_path = "config/config.yaml"
 with open(config_path, "r") as file:
     config = yaml.safe_load(file)
 
