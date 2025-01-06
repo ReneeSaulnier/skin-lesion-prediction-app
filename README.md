@@ -38,3 +38,7 @@ Make sure you have Docker installed on your machine.
    ```bash
    docker-compose up
    ```
+3. Navigate to the specified port:
+   ```bash
+   http://localhost:3000
+   ```
