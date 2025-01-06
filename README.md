@@ -32,4 +32,9 @@ Make sure you have Docker installed on your machine.
    ```bash
    git clone https://github.com/<username>/skin-cancer-prediction-app.git
    cd skin-cancer-prediction-app
+   ```
+
+2. Docker:
+   ```bash
    docker-compose up
+   ```
