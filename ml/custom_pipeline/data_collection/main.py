@@ -13,6 +13,7 @@ download_path = config["data_collection"]["download_path"]
 
 # Download the dataset (to kagglehub's default cache path)
 cached_path = kagglehub.dataset_download(dataset)
+print(f'Cached Path: {cached_path}')
 
 # Create a download path
 if not os.path.exists(download_path):
