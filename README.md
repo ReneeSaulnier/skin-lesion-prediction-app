@@ -7,7 +7,7 @@
 2. [Features](#features)
 3. [Technologies Used](#technologies-used)
 4. [Prerequisites](#prerequisites)
-5. [Run](#steps-to-start-the-application)
+5. [Run Application](#steps-to-start-the-application)
 
 ---
 
