@@ -86,9 +86,5 @@ val_df.to_csv(os.path.join(processed_data_path, 'val.csv'), index=False)
 test_df.to_csv(os.path.join(processed_data_path, 'test.csv'), index=False)
 
 
-# Augment the images!
-# Blurring, flipping, rotating, zooming, etc
-
-
 
 

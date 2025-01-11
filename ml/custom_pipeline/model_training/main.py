@@ -7,6 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 import torch.optim as optim
+from torchvision import transforms
 from torchvision.io import read_image
 
 # Load the config file
@@ -24,17 +25,34 @@ test_image_path = config['model_training']['path']['test_data']
 model_output_path = config['model_training']['model']['output_path']
 model_output_name = config['model_training']['model']['output_name']
 
+# Transform the images for model training
+train_transform = transforms.Compose([
+    transforms.ToPILImage(),
+    transforms.Resize((224, 224)),
+    transforms.RandomHorizontalFlip(p=0.5),
+    transforms.RandomRotation(20),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+
+val_transform = transforms.Compose([
+    transforms.ToPILImage(),
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+
 # Load the dataset
 class SkinCancerDataset(Dataset):
     """
     A custom class for the skin cancer dataset.
     """
     # Runs once to instantiate the object
-    def __init__(self, label_dir, image_dir, transform=None, target_transform=None):
+    def __init__(self, label_dir, image_dir, transform=None):
         self.image_labels = label_dir
         self.image_dir = image_dir
         self.transform = transform
-        self.target_transform = target_transform
+        self.class_to_idx = {'akiec': 0, 'bcc': 1, 'bkl': 2, 'df': 3, 'mel': 4, 'nv': 5, 'vasc': 6}
 
     # Returns the number of 'samples' in the dataset
     def __len__(self):
@@ -44,33 +62,50 @@ class SkinCancerDataset(Dataset):
     # It will then locate it on disk, convert it to a tensor with 'read_image',
     # then gets the corresponding label and then returns a tensor image and label tuple.
     def __getitem__(self, idx):
-        class_to_idx = {'akiec': 0, 'bcc': 1, 'bkl': 2, 'df': 3, 'mel': 4, 'nv': 5, 'vasc': 6}
         # Get the image path from the first column of the dataframe
         image_path = os.path.join(image_input_path, self.image_labels.iloc[idx, 0])
 
         # read_image is default an 8 bit int. We need to convert to 
         # float (32 bit) and normalize to [0, 1]
-        image = read_image(image_path).float() / 255.0
+        image = read_image(image_path)
         # Get the label from the second column of the dataframe
-        label = class_to_idx[self.image_labels.iloc[idx, 1]]
+        label_str = self.image_labels.iloc[idx, 1]
+        label = self.class_to_idx[label_str]
 
         if self.transform:
             image = self.transform(image)
-        if self.target_transform:
-            label = self.target_transform(label)
         return image, label
+    
+
+def handle_class_imbalance(df):
+    """
+    Use weighted sampling to handle class imbalance.
+    """
+    # Get the label counts
+    label_counts = df['dx'].value_counts()
+    print(label_counts)
+
+    total_samples = len(df)
+    num_classes = len(label_counts)
+    class_weights = [total_samples / (num_classes * count) for count in label_counts]
+    print(class_weights)
+
+    # Create a weight for each sample
+    weights = [class_weights[label] for label in df['dx']]
+    print(weights)
+    return weights
 
 # Load the data
 train_df = pd.read_csv(train_image_path)
 val_df = pd.read_csv(val_image_path)
 
 # Data loader for the dataset, loading in batches and avioding loops for efficiency
-train_dataloader = SkinCancerDataset(train_df, image_input_path)
-validation_dataloader = SkinCancerDataset(val_df, image_input_path)
+train_dataset = SkinCancerDataset(train_df, image_input_path, transform=train_transform)
+validation_dataset = SkinCancerDataset(val_df, image_input_path, transform=val_transform)
 
 # Load the data in batches
-train_loader = DataLoader(train_dataloader, batch_size=32, shuffle=True)
-validation_loader = DataLoader(validation_dataloader, batch_size=32, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+validation_loader = DataLoader(validation_dataset, batch_size=32, shuffle=True)
 
 # Create the model
 class Cnn(nn.Module):
