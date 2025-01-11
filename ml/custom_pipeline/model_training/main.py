@@ -5,7 +5,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
 import torch.optim as optim
 from torchvision import transforms
 from torchvision.io import read_image
@@ -103,9 +103,11 @@ val_df = pd.read_csv(val_image_path)
 train_dataset = SkinCancerDataset(train_df, image_input_path, transform=train_transform)
 validation_dataset = SkinCancerDataset(val_df, image_input_path, transform=val_transform)
 
+weighted_sampler = WeightedRandomSampler(handle_class_imbalance(train_df), len(train_df))
+
 # Load the data in batches
-train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-validation_loader = DataLoader(validation_dataset, batch_size=32, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=32, sampler=weighted_sampler)
+validation_loader = DataLoader(validation_dataset, batch_size=32, shuffle=False)
 
 # Create the model
 class Cnn(nn.Module):
