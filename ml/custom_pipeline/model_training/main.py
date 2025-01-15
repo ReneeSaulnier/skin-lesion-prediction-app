@@ -4,7 +4,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
+from torch.utils.data import Dataset, DataLoader
 import torch.optim as optim
 from torchvision import transforms
 from torchvision.io import read_image

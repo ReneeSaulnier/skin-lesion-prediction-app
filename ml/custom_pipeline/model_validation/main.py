@@ -5,6 +5,7 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 from torch import nn
 import torch.nn.functional as F
+from torchvision import transforms
 from torchvision.io import read_image
 from sklearn.metrics import (
     accuracy_score, precision_score,
@@ -24,6 +25,24 @@ image_input_path = config['model_training']['path']['image_path']
 test_image_path = config['model_training']['path']['test_data']
 
 metrics_output_path = config['model_validation']['logs']['metrics']
+
+# Transform the images for model training
+train_transform = transforms.Compose([
+    transforms.ToPILImage(),
+    transforms.Resize((224, 224)),
+    transforms.RandomHorizontalFlip(p=0.5),
+    transforms.RandomRotation(20),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+
+val_transform = transforms.Compose([
+    transforms.ToPILImage(),
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+
 
 # Load the dataset
 class SkinCancerDataset(Dataset):
@@ -71,7 +90,7 @@ class Cnn(nn.Module):
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 109 * 147, 120)
+        self.fc1 = nn.Linear(16 * 53 * 53, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 7)
 
@@ -95,7 +114,7 @@ model.load_state_dict(torch.load(model_file))
 model.eval()
 
 # Load the test dataset
-test_dataloader = SkinCancerDataset(test_df, image_input_path)
+test_dataloader = SkinCancerDataset(test_df, image_input_path, transform=train_transform)
 test_loader = DataLoader(test_dataloader, batch_size=32, shuffle=False)
 
 # Define the evaluation metrics
