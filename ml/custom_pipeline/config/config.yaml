@@ -14,8 +14,8 @@ data_processing:
     train: 0.80
     validation: 0.125
     test: 0.20
-  combine_image_df: True
-  combing_image_and_metadata: True
+  combine_image_df: False
+  combing_image_and_metadata: False
 
 model_training:
   path:

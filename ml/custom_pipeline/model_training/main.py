@@ -1,6 +1,5 @@
 import yaml
 import os
-import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
@@ -75,25 +74,6 @@ class SkinCancerDataset(Dataset):
         if self.transform:
             image = self.transform(image)
         return image, label
-    
-
-def handle_class_imbalance(df):
-    """
-    Use weighted sampling to handle class imbalance.
-    """
-    # Get the label counts
-    label_counts = df['dx'].value_counts()
-    print(label_counts)
-
-    total_samples = len(df)
-    num_classes = len(label_counts)
-    class_weights = [total_samples / (num_classes * count) for count in label_counts]
-    print(class_weights)
-
-    # Create a weight for each sample
-    weights = [class_weights[label] for label in df['dx']]
-    print(weights)
-    return weights
 
 # Load the data
 train_df = pd.read_csv(train_image_path)
@@ -103,10 +83,8 @@ val_df = pd.read_csv(val_image_path)
 train_dataset = SkinCancerDataset(train_df, image_input_path, transform=train_transform)
 validation_dataset = SkinCancerDataset(val_df, image_input_path, transform=val_transform)
 
-weighted_sampler = WeightedRandomSampler(handle_class_imbalance(train_df), len(train_df))
-
 # Load the data in batches
-train_loader = DataLoader(train_dataset, batch_size=32, sampler=weighted_sampler)
+train_loader = DataLoader(train_dataset, batch_size=32)
 validation_loader = DataLoader(validation_dataset, batch_size=32, shuffle=False)
 
 # Create the model
@@ -116,7 +94,7 @@ class Cnn(nn.Module):
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 109 * 147, 120)
+        self.fc1 = nn.Linear(16 * 53 * 53, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 7)
 
@@ -152,7 +130,8 @@ for epoch in range(5):  # loop over the dataset multiple times
 
         # print statistics
         running_loss += loss.item()
-        if i % 1000 == 999:
+        if i % 500 == 0:
+            print()
             print('[%d, %5d] loss: %.3f' %
                   (epoch + 1, i + 1, running_loss / 2000))
             running_loss = 0.0
