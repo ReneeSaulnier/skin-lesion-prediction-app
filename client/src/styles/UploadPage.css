@@ -48,21 +48,7 @@
   color: #f7597e;
   background-color: none;
   border-color: #f7597e;
-}
-
-.upload-button span {
-  height: 50px;
-  font-size: 20px;
-  color: #444;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.upload-button span:hover {
-  color: #f7597e;
+  transition: all 0.3s ease;
 }
 
 .input-file {
@@ -70,7 +56,7 @@
 }
 
 .selected-file {
-  margin-left: 25px;
+  margin-left: 35px;
   width: 250px;
   display: flex;
   align-items: center;

@@ -66,8 +66,7 @@ function UploadPage() {
             onChange={handleFileChange}
           />
           <button className="upload-button" onClick={handleButtonClick}>
-            <CloudUploadIcon />
-            <span>Upload file</span>
+            <CloudUploadIcon style={{ fontSize: 40 }} />
           </button>
           {file && (
             <div className="selected-file">
