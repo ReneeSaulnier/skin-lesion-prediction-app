@@ -2,7 +2,7 @@
 .upload-page {
   height: 100vh;
   width: 100vw;
-  background-image: url("../../public/assets/upload_page_image.jpg");
+  background-image: url("../../public/assets/learnmore_page_image.jpg");
   display: flex;
   justify-content: center;
   align-items: center;
