@@ -12,13 +12,13 @@
 
 /* Frosted glass card look, similar to .upload-card */
 .result-card {
-  background: rgba(255, 255, 255, 0.1); /* Translucent white */
-  backdrop-filter: blur(5px); /* Glass effect */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
   border-radius: 20px;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
   padding: 40px;
   width: 600px;
-  height: auto; /* Let the content dictate height */
+  height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -82,7 +82,7 @@
 }
 
 .upload-box:hover {
-  border-color: #4d90fe; /* Blue hover effect */
+  border-color: #4d90fe;
   background-color: #3a3a56;
 }
 
@@ -93,7 +93,7 @@
 
 /* Predict Button */
 .predict-button {
-  background-color: #4d90fe; /* Vibrant blue button */
+  background-color: #4d90fe;
   color: #ffffff;
   border: none;
   padding: 10px 20px;
@@ -108,6 +108,6 @@
 }
 
 .predict-button:disabled {
-  background-color: #4d4d5e; /* Disabled button color */
+  background-color: #4d4d5e;
   cursor: not-allowed;
 }

@@ -2,14 +2,13 @@
 .learn-more {
   min-height: 100vh;
   width: 100vw;
-  /* Optionally, change the background image or use a solid color */
   background-image: url("../../public/assets/upload_page_image.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Content starts at the top */
+  justify-content: flex-start;
   align-items: center;
   padding: 60px;
   box-sizing: border-box;

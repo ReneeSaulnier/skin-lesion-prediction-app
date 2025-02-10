@@ -8,7 +8,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
 function App() {
-  const location = useLocation(); // Use the `useLocation` hook to get the current path
+  const location = useLocation();
 
   // Conditionally hide navbar and footer on specific pages
   const hideNavbar = location.pathname === '/';
