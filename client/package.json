@@ -1,5 +1,5 @@
 {
-  "name": "skin-cancer-detection-client",
+  "name": "skin-lesion-detection-client",
   "version": "1.0.0",
   "private": true,
   "description": "Frontend for skin cancer detection application. Allows users to upload an image and view prediction results.",
