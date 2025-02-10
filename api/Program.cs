@@ -53,7 +53,7 @@ namespace api
                             });
                         }
                         
-                        // Enable CORS
+                        // Enable CORS *** Not for production ***
                         app.UseCors("AllowAll");
 
                         // Add routing and map controllers
