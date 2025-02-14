@@ -16,8 +16,7 @@ This repository contains a machine learning-powered web application designed to 
 
 ## Features
 - Upload an image of a skin lesion for analysis.
-- AI-powered lesion classification into seven categories: `akiec`, `bcc`, `bkl`, `df`, `mel`, `nv`, and `vasc`.
-- Intuitive and clean user interface for easy interaction.
+- Seven classification categories: `akiec`, `bcc`, `bkl`, `df`, `mel`, `nv`, and `vasc`.
 
 ## Technologies Used
 - **Backend**: C#, ASP.NET
