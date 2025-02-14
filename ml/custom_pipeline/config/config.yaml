@@ -25,7 +25,7 @@ model_training:
     test_data: "data/processed/test.csv"
   model:
     output_name: "custom_model.pth"
-    output_path: "model/"
+    output_path: "../model/"
   logs:
     path: "logs"
 

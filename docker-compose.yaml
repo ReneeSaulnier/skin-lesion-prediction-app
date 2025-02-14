@@ -11,7 +11,7 @@ services:
       - image-storage:/shared/images
   ml:
     build:
-      context: ./ml/pretrained_pipeline/  # Specify the path to the custom or pretrained model
+      context: ./ml/custom_pipeline/  # Specify the path to the custom or pretrained model
     container_name: ml
     ports:
       - "8000:8000"

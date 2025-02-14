@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Query
-from transformers import AutoModelForImageClassification, AutoImageProcessor
 from PIL import Image
 from torchvision import transforms
 import torch.nn.functional as F
@@ -27,7 +26,7 @@ class Cnn(nn.Module):
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 109 * 147, 120)
+        self.fc1 = nn.Linear(16 * 53 * 53, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 7)
 
@@ -47,7 +46,7 @@ model.eval()
 
 # Preprocess the image
 transform = transforms.Compose([
-    transforms.Resize((450, 600)),
+    transforms.Resize((224, 224)),
     transforms.ToTensor(),
 ])
 
