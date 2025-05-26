@@ -50,7 +50,7 @@ transform = transforms.Compose([
     transforms.ToTensor(),
 ])
 
-# Initialize FastAPI app
+# Initialize FastAPI
 app = FastAPI()
 
 
