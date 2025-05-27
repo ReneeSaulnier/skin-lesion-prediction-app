@@ -24,7 +24,7 @@ processor = AutoImageProcessor.from_pretrained(os.path.join(model_folder, model_
 model.to(device)
 model.eval()
 
-# Initialize FastAPI app
+# Initialize FastAPI
 app = FastAPI()
 
 
